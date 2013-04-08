@@ -1,0 +1,21 @@
+DELIMITER $$
+
+DROP TRIGGER IF EXISTS `softwares_changes_delete` $$
+
+CREATE TRIGGER `softwares_changes_delete` AFTER DELETE ON `softwares` 
+FOR EACH ROW BEGIN
+		UPDATE `softwares_changes` 
+			SET
+				DELETED=TRUE,
+				NOTIFIED=FALSE,
+				LAST_TS=CURRENT_TIMESTAMP
+			WHERE 
+				SOFTWARE_ID=OLD.ID
+				AND HARDWARE_ID=OLD.HARDWARE_ID
+				AND	NAME=OLD.NAME
+				AND	VERSION=OLD.VERSION;
+
+END$$
+
+DELIMITER ;
+
